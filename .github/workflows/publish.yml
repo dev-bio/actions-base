@@ -100,10 +100,10 @@ jobs:
       - name: Sign Image
         run: |
 
-          cosign sign \
+          cosign sign --force \
           'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
 
-          cosign attest --predicate 'bom.spdx' \
+          cosign attest --force --predicate 'bom.spdx' \
           'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
           
           cosign verify-attestation \
