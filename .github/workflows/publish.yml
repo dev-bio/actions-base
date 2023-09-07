@@ -42,7 +42,7 @@ jobs:
         with:
           image: '${{ github.repository }}:latest'
           severity-cutoff: ${{ inputs.threshold }}
-          fail-build: ${{ inputs.override == 'false' }}
+          fail-build: ${{ inputs.override == 'true' }}
 
   publish-image:
     name: 'Publish Image'
