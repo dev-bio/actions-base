@@ -1,2 +1,3 @@
-# distroless-runners
-Distroless runner images for GitHub Actions.
+# Native Action Runner
+
+Base image for native action.
