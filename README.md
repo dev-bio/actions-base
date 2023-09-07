@@ -1,3 +1,3 @@
 # Native Action Runner
 
-Base image for native action.
+Base image for native actions.
