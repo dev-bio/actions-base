@@ -1,6 +1,22 @@
 name: Publish Image
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: 'Scan threshold.'
+        required: true
+        default: 'medium'
+        type: choice
+        options:
+          - low
+          - medium
+          - high
+          - critical
+      override:
+        description: 'Scan override.'
+        required: true
+        type: boolean
 
 jobs:
 
@@ -25,8 +41,8 @@ jobs:
         uses: anchore/scan-action@24fd7c9060f3c96848dd1929fac8d796fb5ae4b4 # 3.3.6
         with:
           image: '${{ github.repository }}:latest'
-          severity-cutoff: high
-          fail-build: true
+          severity-cutoff: ${{ inputs.threshold }}
+          fail-build: ${{ inputs.override == 'false' }}
 
   publish-image:
     name: 'Publish Image'
@@ -64,6 +80,7 @@ jobs:
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825 # 4.1.1
         with:
           tags: '${{ github.repository }}:latest'
+          push: true
 
       - name: Sign Image
         run: |
