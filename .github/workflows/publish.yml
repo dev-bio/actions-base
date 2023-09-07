@@ -33,14 +33,18 @@ jobs:
       - name: Build Image
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825 # 4.1.1
         with:
+
           tags: '${{ github.repository }}:latest'
+          
           push: false
           load: true
 
       - name: Scan image
         uses: anchore/scan-action@24fd7c9060f3c96848dd1929fac8d796fb5ae4b4 # 3.3.6
         with:
+
           image: '${{ github.repository }}:latest'
+
           severity-cutoff: ${{ inputs.threshold }}
           fail-build: ${{ inputs.override != 'true' }}
 
@@ -86,14 +90,21 @@ jobs:
         id: build-push
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825 # 4.1.1
         with:
+
+          provenance: false
+          sbom: false
+
           labels: ${{ steps.metadata.outputs.labels }}
           tags: ${{ steps.metadata.outputs.tags }}
+
           push: true
 
       - name: Generate Manifest
         uses: anchore/sbom-action@78fc58e266e87a38d4194b2137a3d4e9bcaf7ca1 # 0.14.3
         with:
+
           image: 'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
+
           dependency-snapshot: true
           output-file: 'bom.spdx'
           format: spdx
