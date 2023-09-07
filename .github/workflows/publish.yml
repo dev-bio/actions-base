@@ -101,10 +101,10 @@ jobs:
       - name: Sign / Attest Image
         run: |
 
-          cosign sign \
+          cosign sign --yes \
           'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
 
-          cosign attest --force --predicate 'bom.spdx' \
+          cosign attest --yes --predicate 'bom.spdx' \
           'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
           
           cosign verify-attestation \
