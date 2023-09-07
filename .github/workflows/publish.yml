@@ -52,7 +52,7 @@ jobs:
 
     permissions:
 
-      contents: read
+      contents: write
       packages: write
       id-token: write
 
@@ -83,13 +83,28 @@ jobs:
           images: 'ghcr.io/${{ github.repository }}'
 
       - name: Build / Push Image
+        id: build-push
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825 # 4.1.1
         with:
           labels: ${{ steps.metadata.outputs.labels }}
           tags: ${{ steps.metadata.outputs.tags }}
           push: true
 
+      - uses: anchore/sbom-action@78fc58e266e87a38d4194b2137a3d4e9bcaf7ca1 # 0.14.3
+        with:
+          image: 'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
+          dependency-snapshot: true
+          output-file: 'bom.spdx'
+          format: spdx
+
       - name: Sign Image
         run: |
 
-          cosign sign 'ghcr.io/${{ github.repository }}:latest'
+          cosign sign \
+          'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
+
+          cosign attest --predicate 'bom.spdx' \
+          'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
+          
+          cosign verify-attestation \
+          'ghcr.io/${{ github.repository }}@${{ steps.build-push.outputs.digest }}'
