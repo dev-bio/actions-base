@@ -68,5 +68,4 @@ jobs:
       - name: Sign Image
         run: |
 
-          cosign sign --key cosign.key \
-            'ghcr.io/${{ github.repository }}:latest'
+          cosign sign 'ghcr.io/${{ github.repository }}:latest'
